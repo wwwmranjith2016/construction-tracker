@@ -1,0 +1,2074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arjun Constructions – Project Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --terra: #A8340F;
+  --terra-l: #C94F26;
+  --terra-xl: #E8C4B4;
+  --gold: #C9A03A;
+  --gold-l: #E5C255;
+  --gold-bg: rgba(201,160,58,0.1);
+  --forest: #1B4332;
+  --forest-l: #2D6A4F;
+  --cream: #F7EED8;
+  --cream2: #EDE0C4;
+  --dark: #141414;
+  --dark2: #1C1C1C;
+  --dark3: #242424;
+  --dark4: #2E2E2E;
+  --muted: rgba(247,238,216,0.55);
+  --muted2: rgba(247,238,216,0.25);
+  --border: rgba(247,238,216,0.1);
+  --white: #FDFAF4;
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --info: #3B82F6;
+  --radius: 6px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.35);
+  --shadow-lg: 0 12px 48px rgba(0,0,0,0.5);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--dark);
+  color: var(--cream);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--dark2); }
+::-webkit-scrollbar-thumb { background: var(--terra); border-radius: 3px; }
+
+/* ── UTILS ── */
+.hidden { display: none !important; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-8 { gap: 8px; }
+.gap-12 { gap: 12px; }
+.gap-16 { gap: 16px; }
+.gap-20 { gap: 20px; }
+.gap-24 { gap: 24px; }
+.w-full { width: 100%; }
+.text-gold { color: var(--gold); }
+.text-terra { color: var(--terra-l); }
+.text-muted { color: var(--muted); }
+.text-sm { font-size: 0.82rem; }
+.text-xs { font-size: 0.72rem; }
+.font-serif { font-family: 'Cormorant Garamond', serif; }
+.bold { font-weight: 600; }
+.mt-4 { margin-top: 4px; }
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed; top: 24px; right: 24px; z-index: 9999;
+  background: var(--forest);
+  border: 1px solid var(--gold);
+  color: var(--cream);
+  padding: 14px 22px;
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+  box-shadow: var(--shadow-lg);
+  transform: translateX(120%);
+  transition: transform 0.4s cubic-bezier(.175,.885,.32,1.275);
+  max-width: 320px;
+}
+#toast.show { transform: translateX(0); }
+#toast.error { background: var(--terra); border-color: var(--terra-l); }
+
+/* ── MODAL OVERLAY ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 5000;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.25s ease;
+}
+.modal-box {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 36px 32px;
+  width: 100%; max-width: 520px;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.3s ease;
+}
+.modal-box h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.7rem; font-weight: 600;
+  color: var(--cream); margin-bottom: 24px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes slideUp { from { opacity:0; transform: translateY(24px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── FORM ELEMENTS ── */
+.form-group { margin-bottom: 18px; }
+.form-group label {
+  display: block;
+  font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 7px;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%; padding: 12px 16px;
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--cream);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.3s, background 0.3s;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--gold);
+  background: var(--dark4);
+}
+.form-group select option { background: var(--dark2); }
+.form-group textarea { resize: vertical; min-height: 90px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 11px 22px;
+  border-radius: var(--radius);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem; font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer; border: none;
+  transition: all 0.25s;
+}
+.btn-primary {
+  background: var(--terra);
+  color: var(--white);
+}
+.btn-primary:hover { background: var(--terra-l); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(168,52,15,0.4); }
+.btn-gold {
+  background: var(--gold);
+  color: var(--dark);
+}
+.btn-gold:hover { background: var(--gold-l); transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent;
+  color: var(--cream);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+.btn-danger {
+  background: transparent;
+  color: #ef4444;
+  border: 1px solid rgba(239,68,68,0.3);
+}
+.btn-danger:hover { background: rgba(239,68,68,0.1); }
+.btn-sm { padding: 7px 14px; font-size: 0.78rem; }
+.btn-icon {
+  width: 34px; height: 34px; padding: 0;
+  border-radius: 50%;
+  background: var(--dark4);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 1rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-icon:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-bg); }
+
+/* ── BADGE ── */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.badge-gold { background: var(--gold-bg); color: var(--gold); border: 1px solid rgba(201,160,58,0.3); }
+.badge-terra { background: rgba(168,52,15,0.15); color: var(--terra-l); border: 1px solid rgba(168,52,15,0.3); }
+.badge-green { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+.badge-blue { background: rgba(59,130,246,0.12); color: #60a5fa; border: 1px solid rgba(59,130,246,0.25); }
+.badge-gray { background: rgba(247,238,216,0.08); color: var(--muted); border: 1px solid var(--border); }
+
+/* ═══════════════════════════
+   LOGIN PAGE
+═══════════════════════════ */
+#login-page {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  position: relative; overflow: hidden;
+}
+.login-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--forest) 0%, var(--dark) 55%, #3B1B0A 100%);
+  z-index: 0;
+}
+.login-dots {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(201,160,58,0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+  z-index: 0;
+}
+.login-glow {
+  position: absolute; top: -150px; right: -150px;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(168,52,15,0.15) 0%, transparent 70%);
+  z-index: 0;
+}
+.login-card {
+  position: relative; z-index: 2;
+  background: rgba(28,28,28,0.92);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(201,160,58,0.2);
+  border-radius: 14px;
+  padding: 48px 44px;
+  width: 100%; max-width: 440px;
+  box-shadow: var(--shadow-lg);
+  animation: slideUp 0.5s ease;
+}
+.login-logo {
+  text-align: center; margin-bottom: 32px;
+}
+.login-logo h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem; font-weight: 700;
+  color: var(--cream);
+}
+.login-logo h1 span { color: var(--gold); }
+.login-logo p { font-size: 0.8rem; color: var(--muted); margin-top: 4px; letter-spacing: 0.12em; text-transform: uppercase; }
+
+.role-tabs {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px; margin-bottom: 28px;
+}
+.role-tab {
+  padding: 14px 12px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+  background: var(--dark3);
+  color: var(--muted);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem; font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.role-tab .role-icon { font-size: 1.6rem; }
+.role-tab.active {
+  border-color: var(--gold);
+  background: var(--gold-bg);
+  color: var(--gold);
+}
+.role-tab:hover:not(.active) { border-color: var(--muted2); color: var(--cream); }
+
+.login-card .btn { width: 100%; padding: 14px; font-size: 0.92rem; }
+.login-hint {
+  text-align: center; margin-top: 20px;
+  font-size: 0.78rem; color: var(--muted);
+  padding: 12px; background: var(--dark3); border-radius: var(--radius);
+  border-left: 3px solid var(--gold);
+  text-align: left;
+  line-height: 1.7;
+}
+.login-hint strong { color: var(--gold); }
+
+/* ═══════════════════════════
+   APP SHELL (after login)
+═══════════════════════════ */
+#app { display: none; min-height: 100vh; }
+
+/* ── SIDEBAR ── */
+#sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 240px; height: 100vh;
+  background: var(--dark2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  z-index: 100;
+  transition: transform 0.3s ease;
+}
+.sidebar-logo {
+  padding: 24px 22px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem; font-weight: 700;
+  color: var(--cream);
+}
+.sidebar-logo h2 span { color: var(--gold); }
+.sidebar-logo p { font-size: 0.72rem; color: var(--muted); margin-top: 2px; letter-spacing: 0.08em; }
+.sidebar-user {
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 11px;
+}
+.user-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; font-weight: 700;
+  flex-shrink: 0;
+}
+.user-avatar.admin { background: var(--terra); color: var(--white); }
+.user-avatar.customer { background: var(--forest); color: var(--cream); }
+.user-name { font-size: 0.88rem; font-weight: 600; color: var(--cream); line-height: 1.3; }
+.user-role { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.08em; }
+.sidebar-nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+.nav-section-label {
+  font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted2); padding: 0 10px;
+  margin-bottom: 6px; margin-top: 16px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 11px 12px;
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-size: 0.87rem; font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none; background: none; width: 100%; text-align: left;
+}
+.nav-item .nav-icon { font-size: 1.1rem; width: 22px; text-align: center; }
+.nav-item:hover { background: var(--dark3); color: var(--cream); }
+.nav-item.active { background: rgba(168,52,15,0.2); color: var(--terra-l); border-left: 3px solid var(--terra); }
+.nav-item .nav-badge {
+  margin-left: auto;
+  background: var(--terra);
+  color: white;
+  font-size: 0.65rem; font-weight: 700;
+  padding: 2px 7px; border-radius: 99px;
+}
+.sidebar-footer {
+  padding: 16px 12px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── MAIN CONTENT ── */
+#main {
+  margin-left: 240px;
+  min-height: 100vh;
+  background: var(--dark);
+}
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(20,20,20,0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 62px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem; font-weight: 600;
+  color: var(--cream);
+}
+.topbar-actions { display: flex; align-items: center; gap: 10px; }
+.page-content { padding: 28px 32px; }
+
+/* ── HAMBURGER (mobile) ── */
+.hamburger-btn {
+  display: none;
+  background: none; border: none;
+  color: var(--cream); font-size: 1.4rem;
+  cursor: pointer;
+}
+
+/* ── VIEWS (panels) ── */
+.view { display: none; }
+.view.active { display: block; animation: fadeIn 0.3s ease; }
+
+/* ═══════════════════════════
+   STAT CARDS
+═══════════════════════════ */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 16px; margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px 22px;
+  position: relative; overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.stat-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+.stat-card::after {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.stat-card.terra::after { background: var(--terra); }
+.stat-card.gold::after { background: var(--gold); }
+.stat-card.green::after { background: var(--forest-l); }
+.stat-card.blue::after { background: var(--info); }
+.stat-icon { font-size: 1.8rem; margin-bottom: 12px; }
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.4rem; font-weight: 700;
+  color: var(--cream); line-height: 1;
+}
+.stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 5px; letter-spacing: 0.06em; }
+
+/* ═══════════════════════════
+   CARDS / PANELS
+═══════════════════════════ */
+.card {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.card-header {
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-header h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 600; color: var(--cream);
+}
+.card-body { padding: 22px; }
+
+/* ═══════════════════════════
+   CUSTOMER TABLE
+═══════════════════════════ */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+thead tr { border-bottom: 2px solid var(--border); }
+thead th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); font-weight: 600;
+}
+tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+  cursor: pointer;
+}
+tbody tr:hover { background: var(--dark3); }
+tbody tr:last-child { border-bottom: none; }
+td { padding: 13px 16px; font-size: 0.88rem; color: var(--cream); }
+.td-muted { color: var(--muted); font-size: 0.82rem; }
+
+/* ─ SEARCH ─ */
+.search-bar {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  transition: border-color 0.3s;
+  flex: 1; max-width: 300px;
+}
+.search-bar:focus-within { border-color: var(--gold); }
+.search-bar input {
+  background: none; border: none;
+  color: var(--cream); font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem; outline: none; flex: 1;
+}
+.search-bar input::placeholder { color: var(--muted); }
+
+/* ═══════════════════════════
+   PROGRESS RING
+═══════════════════════════ */
+.progress-ring-wrap {
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  width: 140px; height: 140px;
+}
+.progress-ring-label {
+  position: absolute;
+  text-align: center;
+}
+.progress-ring-pct {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem; font-weight: 700;
+  color: var(--cream); line-height: 1;
+}
+.progress-ring-sub { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+
+/* ─ PROGRESS BAR ─ */
+.prog-bar-wrap { margin: 10px 0; }
+.prog-bar-label {
+  display: flex; justify-content: space-between;
+  font-size: 0.8rem; color: var(--muted); margin-bottom: 5px;
+}
+.prog-bar {
+  height: 7px; border-radius: 99px;
+  background: var(--dark4);
+  overflow: hidden;
+}
+.prog-bar-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, var(--terra), var(--gold));
+  transition: width 1s cubic-bezier(.22,.61,.36,1);
+}
+
+/* ═══════════════════════════
+   STAGE TIMELINE
+═══════════════════════════ */
+.stage-timeline { padding: 4px 0; }
+.stage-row {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 10px 0;
+  position: relative;
+}
+.stage-row:not(:last-child)::after {
+  content: '';
+  position: absolute; left: 19px; top: 40px;
+  width: 2px; height: calc(100% - 14px);
+  background: var(--border);
+}
+.stage-dot {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; position: relative; z-index: 1;
+  border: 2px solid var(--border);
+  background: var(--dark3);
+  transition: all 0.3s;
+}
+.stage-dot.done { background: var(--terra); border-color: var(--terra); }
+.stage-dot.current { background: var(--gold); border-color: var(--gold); animation: pulseDot 2s infinite; }
+.stage-dot.upcoming { background: var(--dark3); border-color: var(--border); }
+@keyframes pulseDot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201,160,58,0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(201,160,58,0); }
+}
+.stage-info { padding-top: 8px; }
+.stage-name { font-size: 0.92rem; font-weight: 600; color: var(--cream); }
+.stage-name.muted { color: var(--muted); font-weight: 400; }
+.stage-date { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+.stage-row:not(:last-child) .stage-row-line {
+  position: absolute; left: 19px; top: 40px;
+  width: 2px; bottom: 0;
+  background: var(--border);
+}
+
+/* ═══════════════════════════
+   UPDATES FEED
+═══════════════════════════ */
+.feed { display: flex; flex-direction: column; gap: 16px; }
+.feed-item {
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 20px;
+  display: flex; gap: 16px;
+  transition: border-color 0.3s;
+  position: relative;
+}
+.feed-item:hover { border-color: rgba(201,160,58,0.25); }
+.feed-item.today { border-left: 3px solid var(--gold); }
+.feed-dot {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--terra); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+}
+.feed-body { flex: 1; }
+.feed-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  flex-wrap: wrap; gap: 6px;
+}
+.feed-stage { font-size: 0.8rem; font-weight: 600; color: var(--gold); }
+.feed-date { font-size: 0.75rem; color: var(--muted); }
+.feed-text { font-size: 0.88rem; color: var(--cream); line-height: 1.75; margin-top: 6px; }
+.feed-photo {
+  margin-top: 10px;
+  width: 100%; max-height: 220px;
+  object-fit: cover; border-radius: 6px;
+  border: 1px solid var(--border);
+}
+.feed-worker { font-size: 0.75rem; color: var(--muted); margin-top: 8px; }
+
+/* ═══════════════════════════
+   PHOTO GALLERY
+═══════════════════════════ */
+.photo-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+.photo-item {
+  border-radius: 7px; overflow: hidden;
+  aspect-ratio: 4/3;
+  position: relative; cursor: pointer;
+  border: 1px solid var(--border);
+}
+.photo-item img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform 0.4s;
+}
+.photo-item:hover img { transform: scale(1.08); }
+.photo-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
+  display: flex; align-items: flex-end;
+  padding: 8px;
+  opacity: 0; transition: opacity 0.3s;
+}
+.photo-item:hover .photo-overlay { opacity: 1; }
+.photo-date { font-size: 0.68rem; color: var(--cream); }
+
+/* ═══════════════════════════
+   CUSTOMER OVERVIEW CARD
+═══════════════════════════ */
+.cust-overview {
+  display: grid; grid-template-columns: auto 1fr;
+  gap: 28px; align-items: center;
+}
+.overview-ring { flex-shrink: 0; }
+.overview-details h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem; font-weight: 600;
+  color: var(--cream);
+}
+.overview-meta {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
+}
+.meta-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 4px 12px;
+  font-size: 0.78rem; color: var(--muted);
+}
+.meta-chip span:first-child { font-size: 0.9rem; }
+
+/* ═══════════════════════════
+   ADMIN – CUSTOMER DETAIL PANEL
+═══════════════════════════ */
+.back-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: none; border: none;
+  color: var(--muted); font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem; cursor: pointer;
+  padding: 8px 0; margin-bottom: 20px;
+  transition: color 0.2s;
+}
+.back-btn:hover { color: var(--gold); }
+
+.two-col { display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; }
+.three-col { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+
+/* Empty state */
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  color: var(--muted);
+}
+.empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+.empty-state p { font-size: 0.9rem; }
+
+/* ═══════════════════════════
+   MOBILE RESPONSIVE
+═══════════════════════════ */
+@media (max-width: 900px) {
+  #sidebar {
+    transform: translateX(-100%);
+    z-index: 200;
+  }
+  #sidebar.open { transform: translateX(0); }
+  #main { margin-left: 0; }
+  .hamburger-btn { display: block; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .two-col, .three-col { grid-template-columns: 1fr; }
+  .topbar { padding: 0 20px; }
+  .page-content { padding: 20px; }
+  .cust-overview { grid-template-columns: 1fr; text-align: center; }
+  .overview-meta { justify-content: center; }
+  .form-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .login-card { padding: 32px 22px; }
+}
+
+/* sidebar overlay (mobile) */
+.sidebar-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 150;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(2px);
+}
+.sidebar-overlay.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ TOAST ═══════════════ -->
+<div id="toast"></div>
+
+<!-- ═══════════════ LOGIN PAGE ═══════════════ -->
+<div id="login-page">
+  <div class="login-bg"></div>
+  <div class="login-dots"></div>
+  <div class="login-glow"></div>
+  <div class="login-card">
+    <div class="login-logo">
+      <h1>Arjun<span>.</span> Constructions</h1>
+      <p>Project Progress Tracker</p>
+    </div>
+    <div class="role-tabs">
+      <button class="role-tab active" id="tab-admin" onclick="selectRole('admin')">
+        <span class="role-icon">👷</span>
+        Admin
+        <span style="font-size:0.7rem; color:var(--muted)">Constructor</span>
+      </button>
+      <button class="role-tab" id="tab-customer" onclick="selectRole('customer')">
+        <span class="role-icon">🏠</span>
+        Customer
+        <span style="font-size:0.7rem; color:var(--muted)">Home Owner</span>
+      </button>
+    </div>
+    <div class="form-group">
+      <label id="login-user-label">Username</label>
+      <input type="text" id="login-username" placeholder="Enter username" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="Enter password">
+    </div>
+    <button class="btn btn-primary" style="width:100%;padding:14px;font-size:0.95rem;" onclick="doLogin()">
+      🔐 &nbsp;Sign In
+    </button>
+    <div class="login-hint" id="login-hint">
+      <strong>Admin:</strong> admin / admin123
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ APP SHELL ═══════════════ -->
+<div id="app">
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="sidebar-logo">
+      <h2>Arjun<span>.</span> Build</h2>
+      <p>Construction Tracker</p>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sidebarAvatar">A</div>
+      <div>
+        <div class="user-name" id="sidebarName">Admin</div>
+        <div class="user-role" id="sidebarRole">Administrator</div>
+      </div>
+    </div>
+    <div class="sidebar-nav" id="sidebarNav">
+      <!-- filled by JS -->
+    </div>
+    <div class="sidebar-footer">
+      <button class="nav-item w-full" onclick="doLogout()">
+        <span class="nav-icon">🚪</span> Logout
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div class="topbar">
+      <div class="flex items-center gap-12">
+        <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+        <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      </div>
+      <div class="topbar-actions" id="topbarActions"></div>
+    </div>
+    <div class="page-content" id="pageContent">
+      <!-- views injected by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ MODAL PLACEHOLDER ═══════════════ -->
+<div id="modal-area"></div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA STORE (localStorage)
+// ═══════════════════════════════════════
+const STAGES = [
+  { key:'planning',   label:'Planning & Design',    icon:'📐', weight:5  },
+  { key:'foundation', label:'Foundation & Plinth',   icon:'⛏️', weight:10 },
+  { key:'brickwork',  label:'Brickwork & Columns',   icon:'🧱', weight:20 },
+  { key:'lintel',     label:'Lintel & Roof Beam',    icon:'🔩', weight:10 },
+  { key:'roofing',    label:'Roof Slab & Casting',   icon:'🏗️', weight:15 },
+  { key:'plastering', label:'Plastering & Screeding', icon:'🪣', weight:10 },
+  { key:'plumbing',   label:'Plumbing & Electrical',  icon:'🔌', weight:10 },
+  { key:'flooring',   label:'Flooring & Tiling',     icon:'🪟', weight:10 },
+  { key:'finishing',  label:'Painting & Finishing',  icon:'🎨', weight:7  },
+  { key:'handover',   label:'Final Handover',        icon:'🔑', weight:3  }
+];
+
+const DEMO_PHOTOS = [
+  'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&q=70',
+  'https://images.unsplash.com/photo-1590579491624-f98f36d4c763?w=400&q=70',
+  'https://images.unsplash.com/photo-1626885930974-4b69aa21bbf9?w=400&q=70',
+  'https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=400&q=70',
+  'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&q=70',
+  'https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=400&q=70',
+];
+
+function getStore() {
+  try {
+    const d = localStorage.getItem('arjun_tracker');
+    return d ? JSON.parse(d) : null;
+  } catch(e) { return null; }
+}
+function saveStore(data) {
+  try { localStorage.setItem('arjun_tracker', JSON.stringify(data)); }
+  catch(e) {}
+}
+
+function initStore() {
+  const existing = getStore();
+  if (existing) return existing;
+  const store = {
+    customers: [
+      {
+        id: 'CUST001', password: 'rajesh123',
+        name: 'Rajesh Kumar', phone: '+91 98400 11111',
+        location: 'Coimbatore, Tamil Nadu',
+        projectType: 'New House Construction',
+        plotArea: '2400', budget: '₹60L – ₹1 Crore',
+        startDate: '2024-09-15', expectedDate: '2025-06-30',
+        currentStage: 'plastering',
+        updates: [
+          { id:'u1', date:'2025-03-10', stage:'plastering', text:'Interior plastering of ground floor rooms completed. 3 rooms done, 2 pending.', photo: DEMO_PHOTOS[0], workers:12, postedBy:'Er. Arjun' },
+          { id:'u2', date:'2025-03-08', stage:'plastering', text:'Plumbing pipeline work on first floor completed. All inlet-outlet pipes tested.', photo: DEMO_PHOTOS[4], workers:8, postedBy:'Er. Arjun' },
+          { id:'u3', date:'2025-02-28', stage:'roofing', text:'Roof slab casting completed successfully. Curing in progress for 21 days.', photo: DEMO_PHOTOS[1], workers:18, postedBy:'Er. Arjun' },
+          { id:'u4', date:'2025-02-10', stage:'brickwork', text:'First floor brickwork completed up to lintel level. Columns cast and cured.', photo: DEMO_PHOTOS[2], workers:14, postedBy:'Er. Arjun' },
+          { id:'u5', date:'2024-11-20', stage:'foundation', text:'Foundation concrete work completed. RCC footings cast for all 8 columns.', photo:'', workers:10, postedBy:'Er. Arjun' }
+        ],
+        completedStages: ['planning','foundation','brickwork','lintel','roofing'],
+        notes: 'Customer requested extra bedroom on first floor. Revised drawing submitted.'
+      },
+      {
+        id: 'CUST002', password: 'suresh123',
+        name: 'Suresh Nair', phone: '+91 94470 22222',
+        location: 'Thrissur, Kerala',
+        projectType: 'Traditional Nalukettu',
+        plotArea: '3200', budget: 'Above ₹1 Crore',
+        startDate: '2024-07-01', expectedDate: '2025-07-31',
+        currentStage: 'flooring',
+        updates: [
+          { id:'u6', date:'2025-03-09', stage:'flooring', text:'Italian marble flooring started in living and dining areas. 60% complete.', photo: DEMO_PHOTOS[3], workers:10, postedBy:'Er. Arjun' },
+          { id:'u7', date:'2025-03-01', stage:'plumbing', text:'Electrical wiring completed. All 3-phase connections tested by licensed electrician.', photo: DEMO_PHOTOS[5], workers:6, postedBy:'Er. Arjun' },
+          { id:'u8', date:'2025-02-15', stage:'plastering', text:'Traditional lime plastering on external walls completed — authentic Kerala finish.', photo: DEMO_PHOTOS[1], workers:16, postedBy:'Er. Arjun' },
+          { id:'u9', date:'2024-12-10', stage:'roofing', text:'Traditional Mangalore tile roof installation completed with teak wood rafters.', photo: DEMO_PHOTOS[0], workers:20, postedBy:'Er. Arjun' }
+        ],
+        completedStages: ['planning','foundation','brickwork','lintel','roofing','plastering','plumbing'],
+        notes: 'Traditional teak wood carvings ordered from Thrissur artisan. Delivery expected March 2025.'
+      },
+      {
+        id: 'CUST003', password: 'priya123',
+        name: 'Priya Sundar', phone: '+971 50 333 4444',
+        location: 'Madurai, Tamil Nadu',
+        projectType: 'Duplex Villa',
+        plotArea: '4200', budget: 'Above ₹1 Crore',
+        startDate: '2025-01-10', expectedDate: '2026-01-10',
+        currentStage: 'foundation',
+        updates: [
+          { id:'u10', date:'2025-03-05', stage:'foundation', text:'Soil testing completed. Foundation layout marked. Excavation work started for footings.', photo:'', workers:8, postedBy:'Er. Arjun' },
+          { id:'u11', date:'2025-01-15', stage:'planning', text:'Vastu-compliant floor plan approved by client. 3D elevation finalised. DTCP submission done.', photo: DEMO_PHOTOS[2], workers:0, postedBy:'Er. Arjun' }
+        ],
+        completedStages: ['planning'],
+        notes: 'NRI client – all updates via WhatsApp video call every Sunday.'
+      }
+    ]
+  };
+  saveStore(store);
+  return store;
+}
+
+let STORE = initStore();
+let currentUser = null; // { role:'admin' } or { role:'customer', id:'CUST001' }
+let currentView = '';
+let selectedCustomerId = null;
+
+// ═══════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════
+function stageIndex(key) { return STAGES.findIndex(s => s.key === key); }
+
+function calcProgress(customer) {
+  const ci = stageIndex(customer.currentStage);
+  let done = 0;
+  for (let i = 0; i < ci; i++) done += STAGES[i].weight;
+  // partial current stage weight (50%)
+  done += STAGES[ci].weight * 0.5;
+  return Math.round(done);
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+}
+
+function todayStr() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function genId() {
+  return 'CUST' + String(Date.now()).slice(-6);
+}
+
+function uid() {
+  return 'u' + Math.random().toString(36).slice(2,8);
+}
+
+function toast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = type === 'error' ? 'show error' : 'show';
+  setTimeout(() => t.className = '', 3200);
+}
+
+function svgRing(pct, size=140, stroke=10, color='#C9A03A') {
+  const r = (size - stroke) / 2;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (pct / 100) * circ;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="transform:rotate(-90deg)">
+    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="#2E2E2E" stroke-width="${stroke}"/>
+    <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}"
+      stroke-dasharray="${circ}" stroke-dashoffset="${offset}" stroke-linecap="round"
+      style="transition:stroke-dashoffset 1.2s cubic-bezier(.22,.61,.36,1)"/>
+  </svg>`;
+}
+
+// ═══════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════
+let selectedRole = 'admin';
+
+function selectRole(role) {
+  selectedRole = role;
+  document.getElementById('tab-admin').classList.toggle('active', role === 'admin');
+  document.getElementById('tab-customer').classList.toggle('active', role === 'customer');
+  document.getElementById('login-user-label').textContent = role === 'admin' ? 'Username' : 'Customer ID';
+  document.getElementById('login-username').placeholder = role === 'admin' ? 'Enter username' : 'E.g. CUST001';
+  document.getElementById('login-hint').innerHTML = role === 'admin'
+    ? '<strong>Admin:</strong> admin / admin123'
+    : `<strong>Demo Customers:</strong><br>CUST001 / rajesh123<br>CUST002 / suresh123<br>CUST003 / priya123`;
+}
+
+function doLogin() {
+  const user = document.getElementById('login-username').value.trim();
+  const pass = document.getElementById('login-password').value.trim();
+  if (!user || !pass) { toast('Please enter credentials', 'error'); return; }
+
+  if (selectedRole === 'admin') {
+    if (user === 'admin' && pass === 'admin123') {
+      currentUser = { role: 'admin', name: 'Er. Arjun Murugan' };
+      launchApp();
+    } else { toast('Invalid admin credentials', 'error'); }
+  } else {
+    STORE = getStore();
+    const cust = STORE.customers.find(c => c.id === user.toUpperCase() && c.password === pass);
+    if (cust) {
+      currentUser = { role: 'customer', id: cust.id, name: cust.name };
+      launchApp();
+    } else { toast('Invalid Customer ID or password', 'error'); }
+  }
+}
+
+document.getElementById('login-password').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+// ═══════════════════════════════════════
+// APP LAUNCH
+// ═══════════════════════════════════════
+function launchApp() {
+  document.getElementById('login-page').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  buildSidebar();
+  if (currentUser.role === 'admin') navigateTo('dashboard');
+  else navigateTo('cust-home');
+}
+
+function doLogout() {
+  currentUser = null;
+  selectedCustomerId = null;
+  document.getElementById('login-page').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-username').value = '';
+  document.getElementById('login-password').value = '';
+}
+
+// ═══════════════════════════════════════
+// SIDEBAR
+// ═══════════════════════════════════════
+function buildSidebar() {
+  const av = document.getElementById('sidebarAvatar');
+  const nm = document.getElementById('sidebarName');
+  const rl = document.getElementById('sidebarRole');
+  av.textContent = currentUser.name[0];
+  av.className = 'user-avatar ' + currentUser.role;
+  nm.textContent = currentUser.name;
+  rl.textContent = currentUser.role === 'admin' ? 'Administrator' : 'Home Owner';
+
+  const nav = document.getElementById('sidebarNav');
+  if (currentUser.role === 'admin') {
+    nav.innerHTML = `
+      <div class="nav-section-label">Main</div>
+      <button class="nav-item" onclick="navigateTo('dashboard')" data-view="dashboard">
+        <span class="nav-icon">📊</span> Dashboard
+      </button>
+      <button class="nav-item" onclick="navigateTo('customers')" data-view="customers">
+        <span class="nav-icon">👥</span> All Customers
+        <span class="nav-badge" id="navCustCount">${STORE.customers.length}</span>
+      </button>
+      <div class="nav-section-label">Actions</div>
+      <button class="nav-item" onclick="openAddCustomer()">
+        <span class="nav-icon">➕</span> Add Customer
+      </button>
+      <button class="nav-item" onclick="navigateTo('post-update')" data-view="post-update">
+        <span class="nav-icon">📝</span> Post Update
+      </button>
+    `;
+  } else {
+    nav.innerHTML = `
+      <div class="nav-section-label">My Project</div>
+      <button class="nav-item" onclick="navigateTo('cust-home')" data-view="cust-home">
+        <span class="nav-icon">🏠</span> Overview
+      </button>
+      <button class="nav-item" onclick="navigateTo('cust-updates')" data-view="cust-updates">
+        <span class="nav-icon">📰</span> Daily Updates
+      </button>
+      <button class="nav-item" onclick="navigateTo('cust-photos')" data-view="cust-photos">
+        <span class="nav-icon">📷</span> Photo Gallery
+      </button>
+      <button class="nav-item" onclick="navigateTo('cust-stages')" data-view="cust-stages">
+        <span class="nav-icon">🪜</span> Stage Timeline
+      </button>
+    `;
+  }
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+function navigateTo(view, extra) {
+  currentView = view;
+  closeSidebar();
+
+  document.querySelectorAll('.nav-item[data-view]').forEach(el => {
+    el.classList.toggle('active', el.dataset.view === view);
+  });
+
+  const titleMap = {
+    'dashboard': 'Dashboard',
+    'customers': 'All Customers',
+    'customer-detail': 'Customer Project',
+    'post-update': 'Post Daily Update',
+    'cust-home': 'My Project',
+    'cust-updates': 'Daily Updates',
+    'cust-photos': 'Photo Gallery',
+    'cust-stages': 'Stage Timeline'
+  };
+  document.getElementById('topbarTitle').textContent = titleMap[view] || 'Dashboard';
+
+  STORE = getStore();
+  const content = document.getElementById('pageContent');
+  const topActions = document.getElementById('topbarActions');
+  topActions.innerHTML = '';
+
+  if (view === 'dashboard') renderAdminDashboard(content);
+  else if (view === 'customers') renderCustomersTable(content);
+  else if (view === 'customer-detail') renderCustomerDetail(content, extra);
+  else if (view === 'post-update') renderPostUpdate(content, extra);
+  else if (view === 'cust-home') renderCustomerHome(content);
+  else if (view === 'cust-updates') renderCustomerUpdates(content);
+  else if (view === 'cust-photos') renderCustomerPhotos(content);
+  else if (view === 'cust-stages') renderCustomerStages(content);
+}
+
+// ═══════════════════════════════════════
+// ── ADMIN: DASHBOARD ──
+// ═══════════════════════════════════════
+function renderAdminDashboard(c) {
+  STORE = getStore();
+  const total = STORE.customers.length;
+  const inProgress = STORE.customers.filter(cu => cu.currentStage !== 'handover').length;
+  const completed = STORE.customers.filter(cu => cu.currentStage === 'handover').length;
+  const todayUpdates = STORE.customers.flatMap(cu => cu.updates).filter(u => u.date === todayStr()).length;
+
+  // Recent updates across all customers
+  const allUpdates = STORE.customers.flatMap(cu =>
+    cu.updates.map(u => ({ ...u, custName: cu.name, custId: cu.id, location: cu.location }))
+  ).sort((a,b) => b.date.localeCompare(a.date)).slice(0,5);
+
+  c.innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-card terra">
+        <div class="stat-icon">👥</div>
+        <div class="stat-num">${total}</div>
+        <div class="stat-label">Total Customers</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-icon">🏗️</div>
+        <div class="stat-num">${inProgress}</div>
+        <div class="stat-label">In Progress</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-icon">🔑</div>
+        <div class="stat-num">${completed}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-icon">📝</div>
+        <div class="stat-num">${todayUpdates}</div>
+        <div class="stat-label">Today's Updates</div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:20px;">
+      <div class="card">
+        <div class="card-header">
+          <h3>All Projects Overview</h3>
+          <button class="btn btn-sm btn-ghost" onclick="navigateTo('customers')">View All →</button>
+        </div>
+        <div class="card-body" id="dashProjectList"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>Recent Activity</h3>
+        </div>
+        <div class="card-body" id="dashRecentUpdates"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Quick Actions</h3>
+      </div>
+      <div class="card-body">
+        <div class="flex gap-12" style="flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="openAddCustomer()">➕ Add New Customer</button>
+          <button class="btn btn-gold" onclick="navigateTo('post-update')">📝 Post Daily Update</button>
+          <button class="btn btn-ghost" onclick="navigateTo('customers')">👥 View All Customers</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Project list
+  const pl = document.getElementById('dashProjectList');
+  pl.innerHTML = STORE.customers.map(cu => {
+    const pct = calcProgress(cu);
+    const stage = STAGES.find(s => s.key === cu.currentStage);
+    return `
+      <div style="padding:12px 0; border-bottom:1px solid var(--border); cursor:pointer;" onclick="viewCustomerDetail('${cu.id}')">
+        <div class="flex justify-between items-center">
+          <div>
+            <div style="font-weight:600; font-size:0.92rem;">${cu.name}</div>
+            <div class="text-xs text-muted mt-4">${cu.location} · ${cu.projectType}</div>
+          </div>
+          <span class="badge badge-gold">${pct}%</span>
+        </div>
+        <div class="prog-bar-wrap mt-8">
+          <div class="prog-bar"><div class="prog-bar-fill" style="width:${pct}%"></div></div>
+        </div>
+        <div class="text-xs text-muted mt-4">${stage.icon} ${stage.label}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Recent updates
+  const ru = document.getElementById('dashRecentUpdates');
+  if (!allUpdates.length) {
+    ru.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>No updates yet</p></div>`;
+    return;
+  }
+  ru.innerHTML = allUpdates.map(u => `
+    <div style="padding:12px 0; border-bottom:1px solid var(--border);">
+      <div class="flex justify-between items-center">
+        <span class="text-sm bold">${u.custName}</span>
+        <span class="text-xs text-muted">${fmtDate(u.date)}</span>
+      </div>
+      <div class="text-xs text-muted mt-4">${u.location}</div>
+      <div class="text-sm mt-4" style="color:var(--cream);line-height:1.6;">${u.text.slice(0,90)}${u.text.length>90?'…':''}</div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════
+// ── ADMIN: CUSTOMERS TABLE ──
+// ═══════════════════════════════════════
+function renderCustomersTable(c) {
+  c.innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <h3>All Customers (${STORE.customers.length})</h3>
+        <div class="flex gap-12">
+          <div class="search-bar">
+            <span>🔍</span>
+            <input type="text" placeholder="Search customer…" id="custSearch" oninput="filterCustomers()">
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openAddCustomer()">➕ Add Customer</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Location</th>
+              <th>Project Type</th>
+              <th>Stage</th>
+              <th>Progress</th>
+              <th>Started</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="custTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  `;
+  renderCustRows(STORE.customers);
+}
+
+function renderCustRows(list) {
+  const body = document.getElementById('custTableBody');
+  if (!body) return;
+  if (!list.length) {
+    body.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">👷</div><p>No customers found</p></div></td></tr>`;
+    return;
+  }
+  body.innerHTML = list.map(cu => {
+    const pct = calcProgress(cu);
+    const stage = STAGES.find(s => s.key === cu.currentStage);
+    const badgeClass = cu.currentStage === 'handover' ? 'badge-green' : pct > 60 ? 'badge-gold' : 'badge-terra';
+    return `
+      <tr onclick="viewCustomerDetail('${cu.id}')">
+        <td>
+          <div style="font-weight:600">${cu.name}</div>
+          <div class="td-muted">${cu.id}</div>
+        </td>
+        <td class="td-muted">${cu.location}</td>
+        <td class="td-muted">${cu.projectType}</td>
+        <td><span class="badge ${badgeClass}">${stage.icon} ${stage.label}</span></td>
+        <td style="min-width:120px">
+          <div class="flex items-center gap-8">
+            <div class="prog-bar" style="flex:1"><div class="prog-bar-fill" style="width:${pct}%"></div></div>
+            <span class="text-xs text-gold">${pct}%</span>
+          </div>
+        </td>
+        <td class="td-muted">${fmtDate(cu.startDate)}</td>
+        <td onclick="event.stopPropagation()">
+          <div class="flex gap-8">
+            <button class="btn-icon" title="View" onclick="viewCustomerDetail('${cu.id}')">👁️</button>
+            <button class="btn-icon" title="Post Update" onclick="navigateTo('post-update','${cu.id}')">📝</button>
+            <button class="btn-icon" title="Delete" onclick="deleteCustomer('${cu.id}')">🗑️</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function filterCustomers() {
+  const q = document.getElementById('custSearch').value.toLowerCase();
+  const filtered = STORE.customers.filter(c =>
+    c.name.toLowerCase().includes(q) ||
+    c.location.toLowerCase().includes(q) ||
+    c.id.toLowerCase().includes(q)
+  );
+  renderCustRows(filtered);
+}
+
+function viewCustomerDetail(id) {
+  selectedCustomerId = id;
+  navigateTo('customer-detail', id);
+}
+
+function deleteCustomer(id) {
+  if (!confirm('Delete this customer? All updates will be lost.')) return;
+  STORE.customers = STORE.customers.filter(c => c.id !== id);
+  saveStore(STORE);
+  toast('Customer deleted');
+  navigateTo('customers');
+  const nb = document.getElementById('navCustCount');
+  if (nb) nb.textContent = STORE.customers.length;
+}
+
+// ═══════════════════════════════════════
+// ── ADMIN: CUSTOMER DETAIL ──
+// ═══════════════════════════════════════
+function renderCustomerDetail(c, id) {
+  const cu = STORE.customers.find(x => x.id === id);
+  if (!cu) { c.innerHTML = '<p>Not found</p>'; return; }
+  const pct = calcProgress(cu);
+  const stage = STAGES.find(s => s.key === cu.currentStage);
+
+  c.innerHTML = `
+    <button class="back-btn" onclick="navigateTo('customers')">← Back to All Customers</button>
+
+    <!-- Overview -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-body">
+        <div class="cust-overview">
+          <div class="overview-ring">
+            <div class="progress-ring-wrap" style="width:140px;height:140px;">
+              ${svgRing(pct)}
+              <div class="progress-ring-label">
+                <div class="progress-ring-pct">${pct}%</div>
+                <div class="progress-ring-sub">Complete</div>
+              </div>
+            </div>
+          </div>
+          <div class="overview-details">
+            <div class="flex justify-between items-center" style="flex-wrap:wrap;gap:12px;">
+              <div>
+                <div class="font-serif" style="font-size:1.8rem;font-weight:600;color:var(--cream)">${cu.name}</div>
+                <div style="color:var(--muted);font-size:0.85rem;margin-top:4px">${cu.id}</div>
+              </div>
+              <div class="flex gap-8">
+                <button class="btn btn-primary btn-sm" onclick="openPostUpdate('${cu.id}')">📝 Post Update</button>
+                <button class="btn btn-gold btn-sm" onclick="openUpdateStage('${cu.id}')">🔄 Update Stage</button>
+                <button class="btn btn-ghost btn-sm" onclick="openEditCustomer('${cu.id}')">✏️ Edit</button>
+              </div>
+            </div>
+            <div class="overview-meta" style="margin-top:14px;">
+              <div class="meta-chip"><span>📍</span>${cu.location}</div>
+              <div class="meta-chip"><span>🏠</span>${cu.projectType}</div>
+              <div class="meta-chip"><span>📐</span>${cu.plotArea} sq.ft</div>
+              <div class="meta-chip"><span>💰</span>${cu.budget}</div>
+              <div class="meta-chip"><span>📅</span>Start: ${fmtDate(cu.startDate)}</div>
+              <div class="meta-chip"><span>🎯</span>Expected: ${fmtDate(cu.expectedDate)}</div>
+            </div>
+            <div style="margin-top:14px;">
+              <span class="badge badge-gold">${stage.icon} Current: ${stage.label}</span>
+            </div>
+            ${cu.notes ? `<div style="margin-top:12px;padding:10px 14px;background:var(--dark3);border-radius:6px;font-size:0.82rem;color:var(--muted);border-left:3px solid var(--gold)">📌 ${cu.notes}</div>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Credentials -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-header"><h3>🔐 Login Credentials</h3></div>
+      <div class="card-body">
+        <div class="flex gap-20" style="flex-wrap:wrap;">
+          <div><div class="text-xs text-muted mb-4">Customer ID</div><div style="font-weight:700;color:var(--gold);font-size:1.1rem;">${cu.id}</div></div>
+          <div><div class="text-xs text-muted mb-4">Password</div><div style="font-weight:700;color:var(--terra-l);font-size:1.1rem;">${cu.password}</div></div>
+          <div><div class="text-xs text-muted mb-4">Phone</div><div style="font-size:0.9rem;">${cu.phone}</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-bottom:20px;">
+      <!-- Stage Timeline -->
+      <div class="card">
+        <div class="card-header"><h3>🪜 Construction Stages</h3></div>
+        <div class="card-body">
+          <div class="stage-timeline" id="detailStageTimeline"></div>
+        </div>
+      </div>
+      <!-- Updates -->
+      <div class="card">
+        <div class="card-header">
+          <h3>📰 Work Updates (${cu.updates.length})</h3>
+          <button class="btn btn-sm btn-primary" onclick="openPostUpdate('${cu.id}')">+ Add</button>
+        </div>
+        <div class="card-body" style="max-height:480px;overflow-y:auto;" id="detailUpdatesFeed"></div>
+      </div>
+    </div>
+
+    <!-- Photos -->
+    <div class="card">
+      <div class="card-header"><h3>📷 Progress Photos</h3></div>
+      <div class="card-body" id="detailPhotos"></div>
+    </div>
+  `;
+
+  // Stage timeline
+  const stl = document.getElementById('detailStageTimeline');
+  const ci = stageIndex(cu.currentStage);
+  stl.innerHTML = STAGES.map((s, i) => {
+    const isDone = cu.completedStages.includes(s.key);
+    const isCurrent = s.key === cu.currentStage;
+    const cls = isDone ? 'done' : isCurrent ? 'current' : 'upcoming';
+    return `
+      <div class="stage-row">
+        <div class="stage-dot ${cls}">${isDone ? '✓' : s.icon}</div>
+        <div class="stage-info">
+          <div class="stage-name ${cls === 'upcoming' ? 'muted' : ''}">${s.label}</div>
+          <div class="stage-date">${isDone ? '✅ Completed' : isCurrent ? '🔄 In Progress' : '⏳ Upcoming'}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Updates feed
+  const uf = document.getElementById('detailUpdatesFeed');
+  const sorted = [...cu.updates].sort((a,b) => b.date.localeCompare(a.date));
+  uf.innerHTML = sorted.length ? sorted.map(u => feedItemHTML(u)).join('') :
+    `<div class="empty-state"><div class="empty-icon">📭</div><p>No updates posted yet</p></div>`;
+
+  // Photos
+  const photos = cu.updates.filter(u => u.photo).map(u => ({ url: u.photo, date: u.date }));
+  const dp = document.getElementById('detailPhotos');
+  dp.innerHTML = photos.length ? `<div class="photo-grid">${photos.map(p => `
+    <div class="photo-item">
+      <img src="${p.url}" alt="site photo" loading="lazy" onerror="this.src='https://placehold.co/400x300/242424/666?text=Photo'">
+      <div class="photo-overlay"><div class="photo-date">${fmtDate(p.date)}</div></div>
+    </div>`).join('')}</div>` :
+    `<div class="empty-state"><div class="empty-icon">🖼️</div><p>No photos uploaded yet</p></div>`;
+}
+
+// ═══════════════════════════════════════
+// ── ADMIN: POST UPDATE (full page) ──
+// ═══════════════════════════════════════
+function renderPostUpdate(c, preSelectedId) {
+  const custOptions = STORE.customers.map(cu =>
+    `<option value="${cu.id}" ${cu.id === preSelectedId ? 'selected' : ''}>${cu.name} (${cu.id})</option>`
+  ).join('');
+  const stageOptions = STAGES.map(s =>
+    `<option value="${s.key}">${s.icon} ${s.label}</option>`
+  ).join('');
+
+  c.innerHTML = `
+    <div class="card" style="max-width:640px;">
+      <div class="card-header"><h3>📝 Post Daily Work Update</h3></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label>Select Customer *</label>
+          <select id="pu-cust">${custOptions}</select>
+        </div>
+        <div class="form-group">
+          <label>Date *</label>
+          <input type="date" id="pu-date" value="${todayStr()}">
+        </div>
+        <div class="form-group">
+          <label>Construction Stage *</label>
+          <select id="pu-stage">${stageOptions}</select>
+        </div>
+        <div class="form-group">
+          <label>Work Done Today *</label>
+          <textarea id="pu-text" placeholder="Describe what was done today — materials used, work completed, issues faced…"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>No. of Workers</label>
+            <input type="number" id="pu-workers" placeholder="e.g. 12" min="0">
+          </div>
+          <div class="form-group">
+            <label>Photo URL (optional)</label>
+            <input type="url" id="pu-photo" placeholder="https://…">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Also Update Current Stage?</label>
+          <select id="pu-updatestage">
+            <option value="">No — keep current stage</option>
+            ${STAGES.map(s => `<option value="${s.key}">${s.icon} Change to: ${s.label}</option>`).join('')}
+          </select>
+        </div>
+        <div class="flex gap-12 mt-16">
+          <button class="btn btn-primary" onclick="submitUpdate()">✅ Post Update</button>
+          <button class="btn btn-ghost" onclick="navigateTo('customers')">Cancel</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Pre-select stage from customer
+  const custSel = document.getElementById('pu-cust');
+  const stageSel = document.getElementById('pu-stage');
+  function syncStage() {
+    const cu = STORE.customers.find(c => c.id === custSel.value);
+    if (cu) stageSel.value = cu.currentStage;
+  }
+  custSel.addEventListener('change', syncStage);
+  syncStage();
+}
+
+function submitUpdate() {
+  const custId = document.getElementById('pu-cust').value;
+  const date = document.getElementById('pu-date').value;
+  const stage = document.getElementById('pu-stage').value;
+  const text = document.getElementById('pu-text').value.trim();
+  const workers = document.getElementById('pu-workers').value || '0';
+  const photo = document.getElementById('pu-photo').value.trim();
+  const newStage = document.getElementById('pu-updatestage').value;
+
+  if (!custId || !date || !stage || !text) { toast('Please fill required fields', 'error'); return; }
+
+  STORE = getStore();
+  const idx = STORE.customers.findIndex(c => c.id === custId);
+  if (idx === -1) { toast('Customer not found', 'error'); return; }
+
+  const update = { id: uid(), date, stage, text, photo, workers: parseInt(workers), postedBy: 'Er. Arjun' };
+  STORE.customers[idx].updates.unshift(update);
+
+  if (newStage) {
+    const prevStage = STORE.customers[idx].currentStage;
+    const prevIdx = stageIndex(prevStage);
+    const newIdx = stageIndex(newStage);
+    STORE.customers[idx].currentStage = newStage;
+    // Mark all stages before new as completed
+    STAGES.forEach((s, i) => {
+      if (i < newIdx && !STORE.customers[idx].completedStages.includes(s.key)) {
+        STORE.customers[idx].completedStages.push(s.key);
+      }
+    });
+  }
+
+  saveStore(STORE);
+  toast(`✅ Update posted for ${STORE.customers[idx].name}!`);
+  setTimeout(() => viewCustomerDetail(custId), 800);
+}
+
+// ═══════════════════════════════════════
+// ── ADMIN: ADD CUSTOMER MODAL ──
+// ═══════════════════════════════════════
+function openAddCustomer() {
+  const stageOptions = STAGES.map(s =>
+    `<option value="${s.key}">${s.icon} ${s.label}</option>`
+  ).join('');
+  const newId = genId();
+  const html = `
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal-box">
+        <h3>➕ Add New Customer</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input id="ac-name" type="text" placeholder="E.g. Ramesh Kumar">
+          </div>
+          <div class="form-group">
+            <label>Phone *</label>
+            <input id="ac-phone" type="tel" placeholder="+91 98XXX XXXXX">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Location (City, State) *</label>
+          <input id="ac-loc" type="text" placeholder="E.g. Coimbatore, Tamil Nadu">
+        </div>
+        <div class="form-group">
+          <label>Project Type *</label>
+          <select id="ac-type">
+            <option>New House Construction</option>
+            <option>Traditional Nalukettu</option>
+            <option>Duplex Villa</option>
+            <option>Apartment / Commercial</option>
+            <option>Renovation / Extension</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Plot Area (sq.ft)</label>
+            <input id="ac-area" type="number" placeholder="E.g. 2400">
+          </div>
+          <div class="form-group">
+            <label>Budget</label>
+            <select id="ac-budget">
+              <option>Below ₹30 Lakh</option>
+              <option>₹30L – ₹60L</option>
+              <option>₹60L – ₹1 Crore</option>
+              <option>Above ₹1 Crore</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Start Date</label>
+            <input id="ac-start" type="date" value="${todayStr()}">
+          </div>
+          <div class="form-group">
+            <label>Expected Completion</label>
+            <input id="ac-end" type="date">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Current Stage</label>
+          <select id="ac-stage">${stageOptions}</select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Customer ID (auto)</label>
+            <input id="ac-id" value="${newId}" style="color:var(--gold);font-weight:700;">
+          </div>
+          <div class="form-group">
+            <label>Password *</label>
+            <input id="ac-pass" type="text" placeholder="Set a login password">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes (optional)</label>
+          <textarea id="ac-notes" placeholder="Special requirements, preferences…"></textarea>
+        </div>
+        <div class="flex gap-12 mt-16">
+          <button class="btn btn-primary w-full" onclick="submitAddCustomer()">✅ Add Customer</button>
+          <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('modal-area').innerHTML = html;
+}
+
+function submitAddCustomer() {
+  const name = document.getElementById('ac-name').value.trim();
+  const phone = document.getElementById('ac-phone').value.trim();
+  const loc = document.getElementById('ac-loc').value.trim();
+  const type = document.getElementById('ac-type').value;
+  const area = document.getElementById('ac-area').value;
+  const budget = document.getElementById('ac-budget').value;
+  const start = document.getElementById('ac-start').value;
+  const end = document.getElementById('ac-end').value;
+  const stage = document.getElementById('ac-stage').value;
+  const id = document.getElementById('ac-id').value.trim().toUpperCase();
+  const pass = document.getElementById('ac-pass').value.trim();
+  const notes = document.getElementById('ac-notes').value.trim();
+
+  if (!name || !phone || !loc || !pass) { toast('Please fill required fields', 'error'); return; }
+  STORE = getStore();
+  if (STORE.customers.find(c => c.id === id)) { toast('Customer ID already exists', 'error'); return; }
+
+  STORE.customers.push({
+    id, password: pass,
+    name, phone, location: loc,
+    projectType: type, plotArea: area, budget,
+    startDate: start, expectedDate: end,
+    currentStage: stage,
+    updates: [],
+    completedStages: [],
+    notes
+  });
+  saveStore(STORE);
+  closeModal();
+  toast(`✅ Customer ${name} added! ID: ${id}`);
+  const nb = document.getElementById('navCustCount');
+  if (nb) nb.textContent = STORE.customers.length;
+  navigateTo('customers');
+}
+
+// ═══════════════════════════════════════
+// ── ADMIN: UPDATE STAGE MODAL ──
+// ═══════════════════════════════════════
+function openUpdateStage(id) {
+  const cu = STORE.customers.find(c => c.id === id);
+  if (!cu) return;
+  const stageOptions = STAGES.map(s =>
+    `<option value="${s.key}" ${s.key === cu.currentStage ? 'selected' : ''}>${s.icon} ${s.label}</option>`
+  ).join('');
+  document.getElementById('modal-area').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal-box">
+        <h3>🔄 Update Stage – ${cu.name}</h3>
+        <div class="form-group">
+          <label>New Current Stage</label>
+          <select id="us-stage">${stageOptions}</select>
+        </div>
+        <div class="form-group">
+          <label>Remark (optional)</label>
+          <textarea id="us-remark" placeholder="Any note about this stage change…"></textarea>
+        </div>
+        <div class="flex gap-12 mt-16">
+          <button class="btn btn-gold w-full" onclick="submitUpdateStage('${id}')">Update Stage</button>
+          <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function submitUpdateStage(id) {
+  const newStage = document.getElementById('us-stage').value;
+  const remark = document.getElementById('us-remark').value.trim();
+  STORE = getStore();
+  const idx = STORE.customers.findIndex(c => c.id === id);
+  const prevStage = STORE.customers[idx].currentStage;
+  STORE.customers[idx].currentStage = newStage;
+  const newIdx = stageIndex(newStage);
+  STAGES.forEach((s, i) => {
+    if (i < newIdx && !STORE.customers[idx].completedStages.includes(s.key)) {
+      STORE.customers[idx].completedStages.push(s.key);
+    }
+  });
+  if (remark) {
+    STORE.customers[idx].updates.unshift({
+      id: uid(), date: todayStr(), stage: newStage,
+      text: `Stage updated to "${STAGES.find(s=>s.key===newStage).label}". ${remark}`,
+      photo: '', workers: 0, postedBy: 'Er. Arjun'
+    });
+  }
+  saveStore(STORE);
+  closeModal();
+  toast('✅ Stage updated!');
+  viewCustomerDetail(id);
+}
+
+// ═══════════════════════════════════════
+// ── ADMIN: EDIT CUSTOMER MODAL ──
+// ═══════════════════════════════════════
+function openEditCustomer(id) {
+  const cu = STORE.customers.find(c => c.id === id);
+  if (!cu) return;
+  document.getElementById('modal-area').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal-box">
+        <h3>✏️ Edit – ${cu.name}</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input id="ec-name" value="${cu.name}">
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input id="ec-phone" value="${cu.phone}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Location</label>
+          <input id="ec-loc" value="${cu.location}">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Expected Completion</label>
+            <input id="ec-end" type="date" value="${cu.expectedDate}">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input id="ec-pass" value="${cu.password}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="ec-notes">${cu.notes || ''}</textarea>
+        </div>
+        <div class="flex gap-12 mt-16">
+          <button class="btn btn-primary w-full" onclick="submitEditCustomer('${id}')">Save Changes</button>
+          <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function submitEditCustomer(id) {
+  STORE = getStore();
+  const idx = STORE.customers.findIndex(c => c.id === id);
+  STORE.customers[idx].name = document.getElementById('ec-name').value.trim() || STORE.customers[idx].name;
+  STORE.customers[idx].phone = document.getElementById('ec-phone').value.trim();
+  STORE.customers[idx].location = document.getElementById('ec-loc').value.trim();
+  STORE.customers[idx].expectedDate = document.getElementById('ec-end').value;
+  STORE.customers[idx].password = document.getElementById('ec-pass').value.trim();
+  STORE.customers[idx].notes = document.getElementById('ec-notes').value.trim();
+  saveStore(STORE);
+  closeModal();
+  toast('✅ Customer updated!');
+  viewCustomerDetail(id);
+}
+
+// ── Post Update from detail page ──
+function openPostUpdate(custId) {
+  navigateTo('post-update', custId);
+}
+
+// ═══════════════════════════════════════
+// ── CUSTOMER: HOME ──
+// ═══════════════════════════════════════
+function getMyCustomer() {
+  return STORE.customers.find(c => c.id === currentUser.id);
+}
+
+function renderCustomerHome(c) {
+  const cu = getMyCustomer();
+  if (!cu) { c.innerHTML = '<p>Project not found</p>'; return; }
+  const pct = calcProgress(cu);
+  const stage = STAGES.find(s => s.key === cu.currentStage);
+  const ci = stageIndex(cu.currentStage);
+  const latestUpdate = [...cu.updates].sort((a,b) => b.date.localeCompare(a.date))[0];
+
+  // Days since start
+  const started = new Date(cu.startDate);
+  const today = new Date();
+  const daysSince = Math.floor((today - started) / 86400000);
+  const expected = new Date(cu.expectedDate);
+  const daysLeft = Math.ceil((expected - today) / 86400000);
+
+  c.innerHTML = `
+    <!-- Overview Card -->
+    <div class="card" style="margin-bottom:20px;background:linear-gradient(135deg,var(--forest) 0%,#0f2b1e 100%);border-color:rgba(201,160,58,0.25);">
+      <div class="card-body">
+        <div class="cust-overview">
+          <div class="overview-ring">
+            <div class="progress-ring-wrap">
+              ${svgRing(pct, 140, 11, '#C9A03A')}
+              <div class="progress-ring-label">
+                <div class="progress-ring-pct">${pct}%</div>
+                <div class="progress-ring-sub">Complete</div>
+              </div>
+            </div>
+          </div>
+          <div class="overview-details">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:600;color:var(--cream)">
+              Welcome, ${cu.name.split(' ')[0]}! 👋
+            </div>
+            <div style="color:var(--muted);font-size:0.85rem;margin-top:4px">Your Home Construction Tracker</div>
+            <div class="overview-meta" style="margin-top:14px;">
+              <div class="meta-chip"><span>📍</span>${cu.location}</div>
+              <div class="meta-chip"><span>🏠</span>${cu.projectType}</div>
+              <div class="meta-chip"><span>📐</span>${cu.plotArea} sq.ft</div>
+            </div>
+            <div style="margin-top:14px;">
+              <span class="badge badge-gold" style="font-size:0.85rem;padding:6px 14px;">${stage.icon} ${stage.label}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="stats-grid" style="margin-bottom:20px;">
+      <div class="stat-card terra">
+        <div class="stat-icon">📅</div>
+        <div class="stat-num">${daysSince}</div>
+        <div class="stat-label">Days Underway</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-num">${daysLeft > 0 ? daysLeft : 0}</div>
+        <div class="stat-label">Days Remaining</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-icon">🔄</div>
+        <div class="stat-num">${ci + 1}</div>
+        <div class="stat-label">of ${STAGES.length} Stages</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-icon">📝</div>
+        <div class="stat-num">${cu.updates.length}</div>
+        <div class="stat-label">Total Updates</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <!-- Mini stage timeline -->
+      <div class="card">
+        <div class="card-header">
+          <h3>🪜 Construction Progress</h3>
+          <button class="btn btn-sm btn-ghost" onclick="navigateTo('cust-stages')">Full View →</button>
+        </div>
+        <div class="card-body">
+          ${STAGES.map((s, i) => {
+            const isDone = cu.completedStages.includes(s.key);
+            const isCurrent = s.key === cu.currentStage;
+            const cls = isDone ? 'done' : isCurrent ? 'current' : 'upcoming';
+            return `
+              <div class="stage-row">
+                <div class="stage-dot ${cls}">${isDone ? '✓' : s.icon}</div>
+                <div class="stage-info">
+                  <div class="stage-name ${cls === 'upcoming' ? 'muted' : ''}">${s.label}</div>
+                  <div class="stage-date">${isDone ? '✅ Done' : isCurrent ? '🔄 In Progress' : '⏳ Upcoming'}</div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- Latest updates -->
+      <div class="card">
+        <div class="card-header">
+          <h3>📰 Latest Updates</h3>
+          <button class="btn btn-sm btn-ghost" onclick="navigateTo('cust-updates')">All Updates →</button>
+        </div>
+        <div class="card-body" style="max-height:480px;overflow-y:auto;">
+          ${[...cu.updates].sort((a,b) => b.date.localeCompare(a.date)).slice(0,4).map(u => feedItemHTML(u)).join('') ||
+            `<div class="empty-state"><div class="empty-icon">📭</div><p>No updates yet. Check back soon!</p></div>`}
+        </div>
+      </div>
+    </div>
+
+    ${cu.notes ? `
+    <div style="margin-top:20px;padding:16px 20px;background:var(--dark2);border:1px solid rgba(201,160,58,0.2);border-left:4px solid var(--gold);border-radius:var(--radius);">
+      <div style="font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">📌 Note from your Engineer</div>
+      <div style="font-size:0.9rem;color:var(--cream);line-height:1.7;">${cu.notes}</div>
+    </div>` : ''}
+  `;
+}
+
+// ── Customer: Daily Updates ──
+function renderCustomerUpdates(c) {
+  const cu = getMyCustomer();
+  const sorted = [...cu.updates].sort((a,b) => b.date.localeCompare(a.date));
+  c.innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <h3>📰 All Work Updates (${cu.updates.length})</h3>
+      </div>
+      <div class="card-body">
+        ${sorted.length
+          ? `<div class="feed">${sorted.map(u => feedItemHTML(u, true)).join('')}</div>`
+          : `<div class="empty-state"><div class="empty-icon">📭</div><p>No updates posted yet. Your engineer will update you as work progresses!</p></div>`}
+      </div>
+    </div>
+  `;
+}
+
+// ── Customer: Photos ──
+function renderCustomerPhotos(c) {
+  const cu = getMyCustomer();
+  const photos = [...cu.updates].filter(u => u.photo)
+    .sort((a,b) => b.date.localeCompare(a.date))
+    .map(u => ({ url: u.photo, date: u.date, stage: u.stage }));
+  c.innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <h3>📷 Progress Photo Gallery (${photos.length})</h3>
+      </div>
+      <div class="card-body">
+        ${photos.length ? `
+          <div class="photo-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr));">
+            ${photos.map(p => {
+              const s = STAGES.find(s2 => s2.key === p.stage);
+              return `
+                <div class="photo-item" style="aspect-ratio:4/3;">
+                  <img src="${p.url}" alt="site photo" loading="lazy" onerror="this.src='https://placehold.co/400x300/242424/666?text=Photo'">
+                  <div class="photo-overlay">
+                    <div>
+                      <div class="photo-date" style="font-weight:600;">${s ? s.label : p.stage}</div>
+                      <div class="photo-date">${fmtDate(p.date)}</div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        ` : `<div class="empty-state"><div class="empty-icon">🖼️</div><p>No photos uploaded yet. Your engineer will add site photos with each update!</p></div>`}
+      </div>
+    </div>
+  `;
+}
+
+// ── Customer: Stage Timeline ──
+function renderCustomerStages(c) {
+  const cu = getMyCustomer();
+  const pct = calcProgress(cu);
+  c.innerHTML = `
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-body" style="text-align:center;">
+        <div style="display:inline-block;position:relative;">
+          ${svgRing(pct, 160, 13, '#C9A03A')}
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:700;color:var(--cream);line-height:1;">${pct}%</div>
+            <div style="font-size:0.75rem;color:var(--muted)">Complete</div>
+          </div>
+        </div>
+        <div style="margin-top:16px;font-size:0.9rem;color:var(--muted)">
+          ${cu.completedStages.length} of ${STAGES.length} stages done
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h3>🪜 Full Construction Timeline</h3></div>
+      <div class="card-body">
+        ${STAGES.map((s, i) => {
+          const isDone = cu.completedStages.includes(s.key);
+          const isCurrent = s.key === cu.currentStage;
+          const cls = isDone ? 'done' : isCurrent ? 'current' : 'upcoming';
+          const weight = s.weight;
+          return `
+            <div style="display:flex;gap:20px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--border);">
+              <div class="stage-dot ${cls}" style="width:48px;height:48px;font-size:1.3rem;flex-shrink:0;">${isDone ? '✓' : s.icon}</div>
+              <div style="flex:1;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                  <div class="stage-name ${cls === 'upcoming' ? 'muted' : ''}" style="font-size:1rem;">${s.label}</div>
+                  <span class="badge ${isDone ? 'badge-green' : isCurrent ? 'badge-gold' : 'badge-gray'}">
+                    ${isDone ? '✅ Completed' : isCurrent ? '🔄 In Progress' : '⏳ Upcoming'}
+                  </span>
+                </div>
+                <div class="prog-bar-wrap" style="margin-top:10px;">
+                  <div class="prog-bar"><div class="prog-bar-fill" style="width:${isDone ? 100 : isCurrent ? 50 : 0}%;background:${isDone ? 'var(--forest-l)' : 'linear-gradient(90deg,var(--terra),var(--gold))'}"></div></div>
+                </div>
+                <div style="font-size:0.75rem;color:var(--muted);margin-top:5px;">Weight: ${weight}% of total project</div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════
+// SHARED: FEED ITEM HTML
+// ═══════════════════════════════════════
+function feedItemHTML(u, showFull=false) {
+  const stage = STAGES.find(s => s.key === u.stage);
+  const isToday = u.date === todayStr();
+  return `
+    <div class="feed-item ${isToday ? 'today' : ''}">
+      <div class="feed-dot">${stage ? stage.icon : '🏗️'}</div>
+      <div class="feed-body">
+        <div class="feed-header">
+          <div>
+            <div class="feed-stage">${stage ? stage.label : u.stage}</div>
+            ${isToday ? '<span class="badge badge-gold" style="font-size:0.65rem;padding:2px 8px;">TODAY</span>' : ''}
+          </div>
+          <div class="feed-date">${fmtDate(u.date)}</div>
+        </div>
+        <div class="feed-text">${showFull ? u.text : (u.text.length > 160 ? u.text.slice(0,160) + '…' : u.text)}</div>
+        ${u.photo ? `<img class="feed-photo" src="${u.photo}" alt="site" loading="lazy" onerror="this.style.display='none'">` : ''}
+        <div class="feed-worker">👷 ${u.workers} workers · Posted by ${u.postedBy}</div>
+      </div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════
+// MODAL CLOSE
+// ═══════════════════════════════════════
+function closeModal() {
+  document.getElementById('modal-area').innerHTML = '';
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>
